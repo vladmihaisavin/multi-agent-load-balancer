@@ -18,6 +18,7 @@ namespace multi_agent_load_balancer
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
+
         }
         public static string WorkingDirectory { get; } 
         public static int NumberOfWorkers => Convert.ToInt32(Configuration[nameof(NumberOfWorkers)]);

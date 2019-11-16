@@ -18,10 +18,12 @@ namespace multi_agent_load_balancer.Agents
         private List<string> _workers = new List<string>();
         private int _fileIndex = 0;
         private string _pendingWork;
-        private Random _rand = new Random();
+        private Random _rand;
 
         public DistributorAgent(string name) : base(name)
         {
+            Thread.Sleep(2);
+            _rand = new Random(DateTime.Now.Millisecond);
         }
 
         public override void Setup()
@@ -69,7 +71,6 @@ namespace multi_agent_load_balancer.Agents
             {
                 _workers.Add(custom.MessageContent);
             }
-            base.Act(message);
         }
     }
 }

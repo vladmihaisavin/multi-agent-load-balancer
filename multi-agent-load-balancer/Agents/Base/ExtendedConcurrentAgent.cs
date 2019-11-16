@@ -37,5 +37,22 @@ namespace multi_agent_load_balancer.Agents.Base
             base.Send(receiver, toSend, conversationId);
 
         }
+        public void Broadcast<T>(T content, bool includeSender = false, string conversationId = "")
+        {
+            string toSend = null;
+            try
+            {
+                toSend = JsonSerializer.Serialize(content);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            base.Broadcast(toSend, includeSender, conversationId);
+        }
+        public string GetConversationId(Messaging.MessagingConversationId id)
+        {
+            return ((int)id).ToString();
+        }
     }
 }

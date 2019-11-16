@@ -8,6 +8,8 @@ namespace multi_agent_load_balancer.Messaging
     {
         NewFileToProcess,
         NewProcessor,
-        Overload
+        Overload,
+        CheckAvailability,
+        HelperFinishedWork
     }
 }

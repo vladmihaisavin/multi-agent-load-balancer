@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using multi_agent_load_balancer.Messaging;
 using System.Threading.Tasks;
 
 namespace multi_agent_load_balancer.Agents
@@ -16,10 +17,12 @@ namespace multi_agent_load_balancer.Agents
     public class ProcessorAgent : ExtendedConcurrentAgent
     {
         private string _outputDirectory;
-        private Random _rand = new Random();
+        private Random _rand;
         private BlockingCollection<string> _pendingFiles = new BlockingCollection<string>(2); 
         public ProcessorAgent(string name) : base(name)
         {
+            Thread.Sleep(2);
+            _rand = new Random(DateTime.Now.Millisecond);
         }
 
         public override void Setup()
@@ -29,7 +32,7 @@ namespace multi_agent_load_balancer.Agents
                 MessageContent = this.Name,
                 Type = Messaging.MessageType.NewProcessor
             };
-            Send("distributor", message);
+            Broadcast(message);
             _outputDirectory = Path.Combine(RunSettings.WorkingDirectory,
                     RunSettings.Configuration["Directory.Results"]);
             if (!Directory.Exists(_outputDirectory))
@@ -55,9 +58,18 @@ namespace multi_agent_load_balancer.Agents
             {
                 HandleNewFile(custom.MessageContent);
             }
+            else if (custom.Type == Messaging.MessageType.CheckAvailability)
+            {
+                var answer = new AvailabilityMessage
+                {
+                    IsAvailable = _pendingFiles.Count < 2,
+                    FilePath = custom.MessageContent
+                };
+                Send(message.Sender, answer, GetConversationId(MessagingConversationId.AvailabilityMessage));
+            }
         }
 
-        private void HandleNewFile(string filePath)
+        public void HandleNewFile(string filePath)
         {
             if(_pendingFiles.Count < 2)
             {
