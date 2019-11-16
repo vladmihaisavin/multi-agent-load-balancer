@@ -12,3 +12,7 @@ In order to counteract the imbalance, the **DispatcherAgent** will ask the other
 - If there are no replies, the **DispatcherAgent** will generate **HelperAgents**, which can handle the operations made on one file.
 A **ProcessorAgent** may be aided by multiple **HelperAgents** according to its work load. Enough **HelperAgents** should be generated so as to cover the work that
 the **ProcessorAgents** can't handle on their own.
+
+The flow diagram below presents the relationship between the entities and the logic of the multi agent system:
+
+![Alt text](./project_diagram.png?raw=true "Diagram")
