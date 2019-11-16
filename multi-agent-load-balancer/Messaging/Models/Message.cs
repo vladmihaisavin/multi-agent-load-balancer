@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace multi_agent_load_balancer
+namespace multi_agent_load_balancer.Messaging.Models
 {
     public class Message
     {

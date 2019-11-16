@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace multi_agent_load_balancer
 {
@@ -6,7 +7,7 @@ namespace multi_agent_load_balancer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine(RunSettings.NumberOfWorkers);
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using ActressMas;
-namespace multi_agent_load_balancer
+namespace multi_agent_load_balancer.Agents.Base
 {
-    public class ExtendedConcurrentAgent : ConcurrentAgent
+    public abstract class ExtendedConcurrentAgent : ConcurrentAgent
     {
 
         public T ParseMessage<T>(string json) where T: class
