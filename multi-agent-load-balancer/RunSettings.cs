@@ -21,6 +21,8 @@ namespace multi_agent_load_balancer
         }
         public static string WorkingDirectory { get; } 
         public static int NumberOfWorkers => Convert.ToInt32(Configuration[nameof(NumberOfWorkers)]);
+        public static int MinCharLength => Convert.ToInt32(Configuration["File.Generation.MinCharLength"]);
+        public static int MaxCharLength => Convert.ToInt32(Configuration["File.Generation.MaxCharLength"]);
         public static IConfiguration Configuration { get; }
     }
 }

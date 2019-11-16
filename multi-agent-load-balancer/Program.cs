@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ActressMas;
+using multi_agent_load_balancer.Agents;
+using System;
 using System.IO;
 
 namespace multi_agent_load_balancer
@@ -7,7 +9,12 @@ namespace multi_agent_load_balancer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(RunSettings.NumberOfWorkers);
+            var distributor = new DistributorAgent("distributor");
+            var env = new ConcurrentEnvironment();
+            env.Add(distributor);
+            distributor.Start();
+            env.WaitAll();
+            //while (true) { }
         }
     }
 }
