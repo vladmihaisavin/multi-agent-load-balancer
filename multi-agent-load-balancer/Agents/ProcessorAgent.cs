@@ -16,12 +16,15 @@ namespace multi_agent_load_balancer.Agents
 {
     public class ProcessorAgent : ExtendedConcurrentAgent
     {
-        private string _outputDirectory;
+        protected string _outputDirectory;
         private int _maxSleep = Convert.ToInt32(RunSettings.Configuration["ProcessorAgent.MaxSleepMs"]);
         private BlockingCollection<string> _pendingFiles = new BlockingCollection<string>(2); 
         public ProcessorAgent(string name) : base(name)
         {
+            _outputDirectory = Path.Combine(RunSettings.WorkingDirectory,
+                    RunSettings.Configuration["Directory.Results"]);
         }
+        public override AgentType AgentType => AgentType.Processor;
 
         public override void Setup()
         {
@@ -31,8 +34,7 @@ namespace multi_agent_load_balancer.Agents
                 Type = Messaging.MessageType.NewProcessor
             };
             Broadcast(message);
-            _outputDirectory = Path.Combine(RunSettings.WorkingDirectory,
-                    RunSettings.Configuration["Directory.Results"]);
+            
             if (!Directory.Exists(_outputDirectory))
             {
                 Directory.CreateDirectory(_outputDirectory);
@@ -67,12 +69,12 @@ namespace multi_agent_load_balancer.Agents
             }
         }
 
-        public void HandleNewFile(string filePath)
+        private void HandleNewFile(string filePath)
         {
             if(_pendingFiles.Count < 2)
             {
                 _pendingFiles.TryAdd(filePath);
-                Console.WriteLine($"[{this.Name}] Enqueued a new file for processing.");
+                Log($"{this.Name} enqueued a new file for processing.", filePath);
             }
             else
             {
@@ -82,11 +84,11 @@ namespace multi_agent_load_balancer.Agents
                     MessageContent = filePath
                 };
                 Send("dispatcher", custom);
-                Console.WriteLine($"[{this.Name}] Can't handle any more files. Sending to dispatcher...");
+                Log($"{this.Name} Can't handle any more files. Sending to dispatcher...", filePath, ConsoleColor.Yellow);
             }
         }
 
-        private void ProcessFile(string filePath)
+        protected void ProcessFile(string filePath)
         {
             if (!File.Exists(filePath)) return;
             var charCounter = new Dictionary<char, int>();

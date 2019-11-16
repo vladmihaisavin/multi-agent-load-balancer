@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using ActressMas;
@@ -11,6 +12,7 @@ namespace multi_agent_load_balancer.Agents.Base
         {
             Name = name;
         }
+        public abstract AgentType AgentType { get; }
         public T ParseMessage<T>(string json) where T: class
         {
             T obj = null;
@@ -53,6 +55,21 @@ namespace multi_agent_load_balancer.Agents.Base
         public string GetConversationId(Messaging.MessagingConversationId id)
         {
             return ((int)id).ToString();
+        }
+
+        public void Log(string message, string filePath, ConsoleColor consoleColor = ConsoleColor.White)
+        {
+            var fileName = Path.GetFileName(filePath);
+            if(consoleColor != Console.ForegroundColor)
+            {
+                Console.ForegroundColor = consoleColor;
+            }
+
+            Console.WriteLine($"[{AgentType}]\t {message} - {fileName}");
+            if(Console.ForegroundColor != ConsoleColor.White)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ namespace multi_agent_load_balancer.Agents
         public DispatcherAgent(string name) : base(name)
         {
         }
+        public override AgentType AgentType => AgentType.Dispatcher;
         public override void Act(Message message)
         {
             if(message.ConversationId == ((int) Messaging.MessagingConversationId.AvailabilityMessage).ToString())
@@ -49,16 +50,14 @@ namespace multi_agent_load_balancer.Agents
                     foreach (var agent in otherAgents)
                     {
                         Send(agent, question);
-                        Console.WriteLine($"[Dispatcher] Checking {agent} availability...");
+                        Log($"Checking {agent} availability...", custom.MessageContent);
                     }
                 }
                 else if (custom.Type == Messaging.MessageType.HelperFinishedWork)
                 {
                     var helper = _helpers.FirstOrDefault(x => x.Name == custom.MessageContent);
                     helper?.Stop();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"[Dispatcher] Killed helper");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Log("Killed helper", custom.MessageContent, ConsoleColor.Red);
                 }
             }
         }
@@ -80,13 +79,11 @@ namespace multi_agent_load_balancer.Agents
                     MessageContent = filePath
                 };
                 Send(agentToSend, newFileToProcess);
-                Console.WriteLine($"[Dispatcher] Redirecting the file to {agentToSend}");
+                Log($"Redirecting the file to {agentToSend}", filePath, ConsoleColor.Magenta);
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("[Dispatcher] Create helper agent");
-                Console.ForegroundColor = ConsoleColor.White;
+                Log("Create helper agent", filePath, ConsoleColor.Green);
 
                 var helper = new HelperAgent(filePath);
                 _helpers.Add(helper);

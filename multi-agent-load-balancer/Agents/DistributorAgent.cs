@@ -22,6 +22,7 @@ namespace multi_agent_load_balancer.Agents
         public DistributorAgent(string name) : base(name)
         {
         }
+        public override AgentType AgentType => AgentType.Distributor;
 
         public override void Setup()
         {
@@ -59,7 +60,7 @@ namespace multi_agent_load_balancer.Agents
             };
             var processorName = _workers.ElementAt(processorIdx);
             Send(processorName, custom);
-            Console.WriteLine($"[Distributor] Sending a file {fileName} to processor {processorName}");
+            Log($"Sending a file {fileName} to processor {processorName}", filePath);
         }
         public override void Act(Message message)
         {

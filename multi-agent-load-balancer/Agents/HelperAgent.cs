@@ -11,10 +11,11 @@ namespace multi_agent_load_balancer.Agents
         public HelperAgent(string name) : base(name)
         {
         }
+        public override AgentType AgentType => AgentType.Helper;
 
         public override void Setup()
         {
-            HandleNewFile(this.Name);
+            ProcessFile(this.Name);
             var message = new CustomMessage
             {
                 Type = Messaging.MessageType.HelperFinishedWork,
