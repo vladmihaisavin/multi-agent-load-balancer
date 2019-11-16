@@ -6,4 +6,9 @@
     <RootNamespace>multi_agent_load_balancer</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="ActressMas">
+      <HintPath>..\ActressMas.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
