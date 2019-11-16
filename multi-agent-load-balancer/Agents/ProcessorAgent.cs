@@ -17,12 +17,10 @@ namespace multi_agent_load_balancer.Agents
     public class ProcessorAgent : ExtendedConcurrentAgent
     {
         private string _outputDirectory;
-        private Random _rand;
+        private int _maxSleep = Convert.ToInt32(RunSettings.Configuration["ProcessorAgent.MaxSleepMs"]);
         private BlockingCollection<string> _pendingFiles = new BlockingCollection<string>(2); 
         public ProcessorAgent(string name) : base(name)
         {
-            Thread.Sleep(2);
-            _rand = new Random(DateTime.Now.Millisecond);
         }
 
         public override void Setup()
@@ -108,7 +106,7 @@ namespace multi_agent_load_balancer.Agents
                 File.WriteAllText(outputFilePath, JsonSerializer.Serialize(
                     charCounter.OrderBy(x=>x.Key)
                     .ToDictionary(k=>k.Key.ToString(),v=>v.Value)));
-                Thread.Sleep(_rand.Next(0,200));
+                Thread.Sleep(StaticRandom.Next(0, _maxSleep));
             }
         }
     }

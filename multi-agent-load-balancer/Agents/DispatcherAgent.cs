@@ -14,12 +14,9 @@ namespace multi_agent_load_balancer.Agents
         private List<string> _workers = new List<string>();
         private List<HelperAgent> _helpers = new List<HelperAgent>();
 
-        private Random _rand;
         private Dictionary<string, Dictionary<string, bool>> _workerAvailabilityPerFile = new Dictionary<string, Dictionary<string, bool>>();
         public DispatcherAgent(string name) : base(name)
         {
-            Thread.Sleep(2);
-            _rand = new Random(DateTime.Now.Millisecond);
         }
         public override void Act(Message message)
         {
@@ -75,7 +72,7 @@ namespace multi_agent_load_balancer.Agents
 
             if(availableWorkers.Count > 0)
             {
-                var randomIdx = _rand.Next(0, availableWorkers.Count);
+                var randomIdx = StaticRandom.Next(0, availableWorkers.Count);
                 var agentToSend = availableWorkers.ElementAt(randomIdx);
                 var newFileToProcess = new CustomMessage
                 {

@@ -18,12 +18,9 @@ namespace multi_agent_load_balancer.Agents
         private List<string> _workers = new List<string>();
         private int _fileIndex = 0;
         private string _pendingWork;
-        private Random _rand;
 
         public DistributorAgent(string name) : base(name)
         {
-            Thread.Sleep(2);
-            _rand = new Random(DateTime.Now.Millisecond);
         }
 
         public override void Setup()
@@ -46,13 +43,13 @@ namespace multi_agent_load_balancer.Agents
             var fileName = $"file_{_fileIndex++}.txt";
             var filePath = Path.Combine(_pendingWork, fileName);
             var text = new StringBuilder();
-            var charLength = _rand.Next(RunSettings.MinCharLength, RunSettings.MaxCharLength);
+            var charLength = StaticRandom.Next(RunSettings.MinCharLength, RunSettings.MaxCharLength);
             while (text.Length < charLength)
             {
-                text.Append((char)(_rand.Next(0, 26)+'a'));
+                text.Append((char)(StaticRandom.Next(0, 26)+'a'));
             }
             File.WriteAllText(filePath, text.ToString());
-            var processorIdx = _rand.Next(0, _workers.Count);
+            var processorIdx = StaticRandom.Next(0, _workers.Count);
             //wait till we have at least one processor agent
             while(_workers.Count == 0) { Thread.Sleep(100); }
             var custom = new CustomMessage
