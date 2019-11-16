@@ -7,5 +7,8 @@ namespace multi_agent_load_balancer.Agents
 {
     public class HelperAgent : ProcessorAgent
     {
+        public HelperAgent(string name) : base(name)
+        {
+        }
     }
 }

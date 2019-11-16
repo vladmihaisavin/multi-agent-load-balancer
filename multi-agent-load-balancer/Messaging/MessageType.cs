@@ -6,7 +6,8 @@ namespace multi_agent_load_balancer.Messaging
 {
     public enum MessageType
     {
-
+        NewFileToProcess,
+        NewProcessor,
         Overload
     }
 }

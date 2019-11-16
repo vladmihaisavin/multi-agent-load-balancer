@@ -13,6 +13,12 @@ namespace multi_agent_load_balancer
             var env = new ConcurrentEnvironment();
             env.Add(distributor);
             distributor.Start();
+            for (int i = 1; i <= RunSettings.NumberOfWorkers; i++)
+            {
+                var processor = new ProcessorAgent($"p{i}");
+                env.Add(processor);
+                processor.Start();
+            }
             env.WaitAll();
             //while (true) { }
         }

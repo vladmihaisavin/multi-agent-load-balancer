@@ -1,23 +1,29 @@
-﻿using multi_agent_load_balancer.Agents.Base;
+﻿using ActressMas;
+using multi_agent_load_balancer.Agents.Base;
+using multi_agent_load_balancer.Messaging.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace multi_agent_load_balancer.Agents
 {
     public class DistributorAgent : ExtendedConcurrentAgent
     {
-        public DistributorAgent(string name)
-        {
-            Name = name;
-        }
         private Timer _timer = new Timer();
-        private Dictionary<string, string> _aliveWorkers;
+        private List<string> _workers = new List<string>();
         private int _fileIndex = 0;
         private string _pendingWork;
         private Random _rand = new Random();
+
+        public DistributorAgent(string name) : base(name)
+        {
+        }
+
         public override void Setup()
         {
             _pendingWork = Path.Combine(RunSettings.WorkingDirectory,
@@ -26,7 +32,7 @@ namespace multi_agent_load_balancer.Agents
             {
                 Directory.CreateDirectory(_pendingWork);
             }
-
+            
             _timer.AutoReset = true;
             _timer.Interval = Convert.ToInt32(RunSettings.Configuration["File.Generation.MsInterval"]);
             _timer.Elapsed += GenerateFile;
@@ -43,7 +49,27 @@ namespace multi_agent_load_balancer.Agents
             {
                 text.Append((char)(_rand.Next(0, 26)+'a'));
             }
-            File.AppendAllText(filePath, text.ToString());
+            File.WriteAllText(filePath, text.ToString());
+            var processorIdx = _rand.Next(0, _workers.Count);
+            //wait till we have at least one processor agent
+            while(_workers.Count == 0) { Thread.Sleep(100); }
+            var custom = new CustomMessage
+            {
+                Type = Messaging.MessageType.NewFileToProcess,
+                MessageContent = filePath,
+            };
+            var processorName = _workers.ElementAt(processorIdx);
+            Send(processorName, custom);
+            Console.WriteLine($"[Distributor] Sending a file {fileName} to processor {processorName}");
+        }
+        public override void Act(Message message)
+        {
+            var custom = ParseMessage<CustomMessage>(message.Content);
+            if(custom.Type == Messaging.MessageType.NewProcessor)
+            {
+                _workers.Add(custom.MessageContent);
+            }
+            base.Act(message);
         }
     }
 }

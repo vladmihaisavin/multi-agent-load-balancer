@@ -4,9 +4,9 @@ using System.Text;
 
 namespace multi_agent_load_balancer.Messaging.Models
 {
-    public class Message
+    public class CustomMessage
     {
         public MessageType Type { get; set; }
-        public string Content { get; set; }
+        public string MessageContent { get; set; }
     }
 }

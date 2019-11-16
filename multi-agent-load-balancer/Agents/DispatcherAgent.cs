@@ -7,5 +7,8 @@ namespace multi_agent_load_balancer.Agents
 {
     public class DispatcherAgent : ExtendedConcurrentAgent
     {
+        public DispatcherAgent(string name) : base(name)
+        {
+        }
     }
 }

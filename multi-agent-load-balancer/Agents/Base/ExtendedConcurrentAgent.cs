@@ -7,13 +7,16 @@ namespace multi_agent_load_balancer.Agents.Base
 {
     public abstract class ExtendedConcurrentAgent : ConcurrentAgent
     {
-
+        public ExtendedConcurrentAgent(string name)
+        {
+            Name = name;
+        }
         public T ParseMessage<T>(string json) where T: class
         {
             T obj = null;
             try
             {
-                var parsed = JsonSerializer.Deserialize<T>(json);
+                obj = JsonSerializer.Deserialize<T>(json);
             }catch(Exception e)
             {
                 Console.WriteLine(e);
