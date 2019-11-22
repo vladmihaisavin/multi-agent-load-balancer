@@ -66,6 +66,7 @@ namespace multi_agent_load_balancer.Agents
                     FilePath = custom.MessageContent
                 };
                 Send(message.Sender, answer, GetConversationId(MessagingConversationId.AvailabilityMessage));
+                Log($"{this.Name} answered with availability={answer.IsAvailable}", custom.MessageContent);
             }
         }
 
