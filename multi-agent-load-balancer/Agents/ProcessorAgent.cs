@@ -33,18 +33,20 @@ namespace multi_agent_load_balancer.Agents
                 MessageContent = this.Name,
                 Type = Messaging.MessageType.NewProcessor
             };
+            //let distributor and dispatcher know about it's presence
             Broadcast(message);
             
             if (!Directory.Exists(_outputDirectory))
             {
                 Directory.CreateDirectory(_outputDirectory);
             }
+            //start consumer thread
             Task.Factory.StartNew(() => HandleFiles());
         }
 
         private void HandleFiles()
         {
-
+            //block the consumer thread until it can consume data
             foreach (var filePath in _pendingFiles.GetConsumingEnumerable())
             {
                 ProcessFile(filePath);
