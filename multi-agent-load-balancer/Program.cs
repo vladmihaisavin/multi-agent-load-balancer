@@ -16,14 +16,15 @@ namespace multi_agent_load_balancer
             env.Add(dispatcher);
             distributor.Start();
             dispatcher.Start();
+            //add processor agents to the env based on application settings
             for (int i = 1; i <= RunSettings.NumberOfWorkers; i++)
             {
                 var processor = new ProcessorAgent($"p{i}");
                 env.Add(processor);
                 processor.Start();
             }
+            //keep the application running
             env.WaitAll();
-            //while (true) { }
         }
     }
 }

@@ -28,8 +28,10 @@ namespace multi_agent_load_balancer.Agents
                 {
                     workerAnswers = new Dictionary<string, bool>();
                 }
+                //save answer
                 workerAnswers[message.Sender] = answer.IsAvailable;
                 _workerAvailabilityPerFile[answer.FilePath] = workerAnswers;
+                //wait for all the other agents to answer
                 HandleAnswers(answer.FilePath);
             }
             else
@@ -49,6 +51,7 @@ namespace multi_agent_load_balancer.Agents
                     };
                     foreach (var agent in otherAgents)
                     {
+                        //ask the other agents if they can handle this file
                         Send(agent, question);
                         Log($"Checking {agent} availability...", custom.MessageContent);
                     }
@@ -64,11 +67,12 @@ namespace multi_agent_load_balancer.Agents
 
         private void HandleAnswers(string filePath)
         {
+            //take answers we saved for a specific file path
             var allAnswers = _workerAvailabilityPerFile[filePath] ?? new Dictionary<string, bool>();
+            //if there are less than workers count - 1 then it means we didn't receive all the answers yet
             if(allAnswers.Count < _workers.Count - 1){ return; }
-
+            //get the workers who answered positively
             var availableWorkers = allAnswers.Where(x => x.Value).Select(x => x.Key).ToList();
-
             if(availableWorkers.Count > 0)
             {
                 var randomIdx = StaticRandom.Next(0, availableWorkers.Count);
@@ -78,15 +82,16 @@ namespace multi_agent_load_balancer.Agents
                     Type = Messaging.MessageType.NewFileToProcess,
                     MessageContent = filePath
                 };
+                //send the file to a randomly selected worker from the available workers
                 Send(agentToSend, newFileToProcess);
                 Log($"Redirecting the file to {agentToSend}", filePath, ConsoleColor.Magenta);
             }
             else
             {
                 Log("Create helper agent", filePath, ConsoleColor.Green);
-
                 var helper = new HelperAgent(filePath);
                 _helpers.Add(helper);
+                //add helper agent to the environment
                 this.Environment.Add(helper);
                 helper.Start();
             }

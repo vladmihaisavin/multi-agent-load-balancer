@@ -30,9 +30,9 @@ namespace multi_agent_load_balancer.Agents
                 RunSettings.Configuration["Directory.PendingWork"]);
             if (!Directory.Exists(_pendingWork))
             {
+                //create directory for generated files
                 Directory.CreateDirectory(_pendingWork);
             }
-            
             _timer.AutoReset = true;
             _timer.Interval = Convert.ToInt32(RunSettings.Configuration["File.Generation.MsInterval"]);
             _timer.Elapsed += GenerateFile;
@@ -44,15 +44,15 @@ namespace multi_agent_load_balancer.Agents
             var fileName = $"file_{_fileIndex++}.txt";
             var filePath = Path.Combine(_pendingWork, fileName);
             var text = new StringBuilder();
+            //assign a random length to the generated file file 
             var charLength = StaticRandom.Next(RunSettings.MinCharLength, RunSettings.MaxCharLength);
             while (text.Length < charLength)
             {
                 text.Append((char)(StaticRandom.Next(0, 26)+'a'));
             }
             File.WriteAllText(filePath, text.ToString());
+            //take a random processor agent 
             var processorIdx = StaticRandom.Next(0, _workers.Count);
-            //wait till we have at least one processor agent
-            while(_workers.Count == 0) { Thread.Sleep(100); }
             var custom = new CustomMessage
             {
                 Type = Messaging.MessageType.NewFileToProcess,
